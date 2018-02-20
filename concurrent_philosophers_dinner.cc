@@ -22,12 +22,16 @@ void sender()
     const unsigned int delay_time = 2000000;
     cout << "Hello, I am the sender." << endl;
     cout << "I will send a message every " << delay_time << " microseconds." << endl;
-    while(1){
-		cout << "Sending message: ?" << data << endl;//
-		nic->send(nic->broadcast(), NIC::ELP, data, sizeof data);
-		cout << "Sent" << endl;
-		Alarm::delay(delay_time);
-	}
+    while(1) {
+    	if(estado==1|true){
+		    cout << "Sending message: " << data << endl;
+		    nic->send(0x0a000101, NIC::ELP, data, sizeof data);
+		    cout << "Sent" << endl;
+		    data[0] = ((data[0] - '0' + 1) % 10) + '0';
+		    estado = 0;
+		}
+        Alarm::delay(delay_time);
+    }
 }
 
 bool led_value;
@@ -63,10 +67,11 @@ public:
             cout << endl << "=====================" << endl;
             _nic->free(b);
             
+            estado = 1;
         	GPIO g('C',3, GPIO::OUT);
-			g.set(0);
-			Delay esperando(500000);//0,5 segundos.
 			g.set(1);
+			Delay esperando(500000);//0,5 segundos.
+			g.set(0);
         }
     }
 
@@ -77,10 +82,11 @@ private:
 
 void receiver()
 {
-    //led = new GPIO('C',3, GPIO::OUT);
-    //led_value = false; //true;
-    //led->set(led_value);
-    cout << "Hello, I am the receiver 102." << endl;
+    
+    led = new GPIO('C',3, GPIO::OUT);
+    led_value = false; //true;
+    led->set(led_value);
+    cout << "Hello, I am the receiver 103." << endl;
     cout << "I will attach myself to the NIC and print every message I get." << endl;
     NIC * nic = new NIC();
     Receiver * r = new Receiver(NIC::ELP, nic);
@@ -136,12 +142,9 @@ int main()
 
 	int i;
 	estado = 1;
-	
-	GPIO g('C',3, GPIO::OUT);
-	g.set(1);
 
 	receiver();
-    //sender();
+    sender();
 
     while(1);
 

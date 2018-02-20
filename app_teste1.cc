@@ -10,6 +10,9 @@
 #include <gpio.h>
 #include <alarm.h>
 
+
+//#include <sstream>//Será que esta bibliotec funciona?
+
 using namespace EPOS;
 
 OStream cout;
@@ -17,21 +20,19 @@ int estado;
 
 void sender()
 {
-    char data[] = "0 Hello, World!";
+    char data[] = "0";//Inidica para qual placa a msg vai.
     NIC * nic = new NIC();
     const unsigned int delay_time = 2000000;
     cout << "Hello, I am the sender." << endl;
     cout << "I will send a message every " << delay_time << " microseconds." << endl;
-    while(1) {
-    	if(estado==1|true){
-		    cout << "Sending message: " << data << endl;
-		    nic->send(0x0a000102, NIC::ELP, data, sizeof data);
-		    cout << "Sent" << endl;
-		    data[0] = ((data[0] - '0' + 1) % 10) + '0';
-		    estado = 0;
-		}
-        Alarm::delay(delay_time);
-    }
+    
+    while(1){
+		cout << "Sending message: ?" << data << endl;//
+		nic->send(nic->broadcast(), NIC::ELP, data, sizeof data);
+		cout << "Sent" << endl;
+		Alarm::delay(delay_time);
+	}
+    
 }
 
 bool led_value;
@@ -67,7 +68,8 @@ public:
             cout << endl << "=====================" << endl;
             _nic->free(b);
             
-            estado = 1;
+            
+            
         	GPIO g('C',3, GPIO::OUT);
 			g.set(0);
 			Delay esperando(500000);//0,5 segundos.
@@ -146,8 +148,8 @@ int main()
 	GPIO g('C',3, GPIO::OUT);
 	g.set(1);
 
-	receiver();
-    //sender();
+	//receiver();
+    sender();
 
     while(1);
 

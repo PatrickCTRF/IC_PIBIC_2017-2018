@@ -1,0 +1,82 @@
+INSTALAR PRIMEIRO PYSERIAL PARA PODER DAR DOWNLOAD NAS PLACAS:
+	$ sudo apt-get install python2.7
+	$ sudo apt-get install python3.5
+	$ sudo apt-get install python-pip
+	$ python -m pip install pyserial
+	
+	Baixar, extrair e instalar pelo terminal os pacotes do seguinte link: http://arduino-er.blogspot.com.br/2013/03/install-pyserial-on-ubuntu.html
+	
+	Pronto, agora podemos fazer os demais passos e será possível realizar o "flash" dos 
+	programas nas placas.
+
+
+svn co endereço do site      -- Baixa os arquivos do site endereçado. co significa check out (não sei pra que).
+
+svn co --username "Patrick Ferreira" https://epos.lisha.ufsc.br/svn/epos2/branches/arm/       --Baixa também se precisar de username. Deve pedir a senha em seguida.
+
+ls dev/tty        --         exibe na tela os dispositivos conectados de um jeito que vc não sabe qual é qual.
+
+cutecom           --         exibe um tipo de Serial Monitor numa janela própria.
+
+cutecom &         --         não sei direito o que faz.
+
+screen /dev/ttyACM0 115200   --      Exibe informações da USB como um serial monitor, porém no próprio terminal. O segundo argumento é o dispositvio de origem e o terceiro é o baud rate (taxa de comunicação).
+
+make APPLICATION=app_teste flash    --     Compila a aplicação selecionada. Não coloque extensão e lembre-se de mudar o arquivo trats (.h) do respectivo programa trocado o simulador pelo eMote3 na linha de código específica.
+enum {Legacy_PC, eMote3, LM3S811, Zynq};
+    static const unsigned int MODEL = eMote3;
+    
+    
+Ctrl + R          --		Busca comandos anteriores (até de outros dias) que contenham o texto que vc digitar em seguida. Ctrl + R novamente para ir navegando entre os próximos comandos que contenham o texto digitado.
+
+Ctrl + A          --		Retorna o cursor para o início da linha.
+
+
+
+ANEXO 1: (Se não souber qual GCC baixar, olhe o anexo 2)
+
+
+	Para poder instalar os compiladores do EPOS:
+	
+	link: http://epos.lisha.ufsc.br/EPOS+2+User+Guide#Setting_up_EPOS
+	
+	2.2. Downloading the toolchain
+
+	2.2.1. GCC
+
+	Recent versions of EPOS can go with any (recent) GCC version. However, since EPOS is itself the operating system, the compiler cannot rely on a libc compiled for another OS (such as LINUX). A cross-compiler is needed even if your source and target machines are x86-based PCs. You can download a precompiled GCC for EPOS from the download page or compile a newlib-based toolchain yourself following these instructions.
+
+	2.2.2. as86
+
+	If you don't have the "as86" command installed, you need to install the dev86 package (or bin86 in Ubuntu).
+
+	2.2.3. 32-bit libs
+
+	If you use a 64-bit operating system, you will need to install a set of 32-bit libs. In Ubuntu 64, you need these packages: 
+	ia32-libs lib32stdc++6 libc6-i386 libc6-dev-i386
+
+	As noted in the comments: "If package ia32-libs is not available, the following packages replace it: lib32z1 lib32ncurses5 lib32bz2-1.0"
+
+	In Fedora, install these packages: 
+	glibc-devel.i686 libstdc++.i686 libstdc++-devel zlib.i686
+
+	2.3. Installing
+
+	Simply open a release tarball or check out a version from the SVN server at the place you want EPOS to be installed. You don't need to bother about the chosen path nor set any environment variable. EPOS is fully self contained.
+
+	If you also downloaded a toolchain tarball, open it at /usr/local/<architecture> whenever possible. For instance, if you downloaded the ia32 toolchain, you should extract it at /usr/local/ia32/gcc-4.4.4. 
+	If you downloaded the arm toolchain for EPOSMote III, you should extract it at /usr/local/arm/gcc-4.4.4
+
+	If you do not have access to that path, you'll have to adjust the makedefs file in EPOS' main directory accordingly.
+	
+	
+ANEXO 2:
+	
+	link: http://epos.lisha.ufsc.br/dl88
+	
+	GCC 4.4.4
+
+	Recent versions of EPOS can go with any (recent) GCC version. However, since EPOS is itself the operating system, the compiler cannot rely on a libc compiled for another OS (such as LINUX). A cross-compiler is needed even if your source and target machines are x86-based PCs. You can download a precompiled GCC for EPOS below or compile a newlib-based tool-chain yourself (not recommended, since you are reading a beginner's guide). 
+
+	ARM GCC 4.4.4 (for EPOSMote III and others)
+	
