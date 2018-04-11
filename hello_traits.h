@@ -27,7 +27,7 @@ template<> struct Traits<Build>
     static const unsigned int MACHINE = Cortex;
 
     enum {Legacy_PC, eMote3, LM3S811, Zynq};
-    static const unsigned int MODEL = LM3S811;
+    static const unsigned int MODEL = eMote3;
 
     static const unsigned int CPUS = 1;
     static const unsigned int NODES = 1; // > 1 => NETWORKING
@@ -84,7 +84,7 @@ template<> struct Traits<Serial_Display>: public Traits<void>
 {
     static const bool enabled = true;
     enum {UART, USB};
-    static const int ENGINE = UART;
+    static const int ENGINE = USB;
     static const int COLUMNS = 80;
     static const int LINES = 24;
     static const int TAB_SIZE = 8;
@@ -138,7 +138,7 @@ template<> struct Traits<Thread>: public Traits<void>
 {
     static const bool smp = Traits<System>::multicore;
 
-    typedef Scheduling_Criteria::CPU_Affinity Criterion;
+    typedef Scheduling_Criteria::RR Criterion;
     static const unsigned int QUANTUM = 10000; // us
 
     static const bool trace_idle = hysterically_debugged;
@@ -182,7 +182,7 @@ template<> struct Traits<Network>: public Traits<void>
     static const unsigned int TIMEOUT = 10; // s
 
     // This list is positional, with one network for each NIC in Traits<NIC>::NICS
-    typedef LIST<IP> NETWORKS;
+    typedef LIST<ELP> NETWORKS;
 };
 
 template<> struct Traits<ELP>: public Traits<Network>

@@ -6,92 +6,8 @@
 #include <semaphore.h>
 #include <alarm.h>
 #include <display.h>
-#include <nic.h>
-#include <gpio.h>
-#include <alarm.h>
 
 using namespace EPOS;
-
-OStream cout;
-int estado;
-
-void sender()
-{
-    char data[] = "0 Hello, World!";
-    NIC * nic = new NIC();
-    const unsigned int delay_time = 2000000;
-    cout << "Hello, I am the sender." << endl;
-    cout << "I will send a message every " << delay_time << " microseconds." << endl;
-    while(1) {
-    	if(estado==1|true){
-		    cout << "Sending message: " << data << endl;
-		    nic->send(0x0a000101, NIC::ELP, data, sizeof data);
-		    cout << "Sent" << endl;
-		    data[0] = ((data[0] - '0' + 1) % 10) + '0';
-		    estado = 0;
-		}
-        Alarm::delay(delay_time);
-    }
-}
-
-bool led_value;
-GPIO * led;
-
-class Receiver : public IEEE802_15_4::Observer
-{
-    typedef char data_type;
-
-public:
-    typedef IEEE802_15_4::Protocol Protocol;
-    typedef IEEE802_15_4::Buffer Buffer;
-    typedef IEEE802_15_4::Frame Frame;
-    typedef IEEE802_15_4::Observed Observed;
-
-    Receiver(const Protocol & p, NIC * nic) : _prot(p), _nic(nic)
-    {
-        _nic->attach(this, _prot);
-    }
-
-    void update(Observed * o, Protocol p, Buffer * b)
-    {
-        cout << "Received buffer" << reinterpret_cast<void *>(b) << endl;
-        if(p == _prot) {
-            led_value = !led_value;
-            led->set(led_value);
-            Frame * f = b->frame();
-            auto d = f->data<data_type>();
-            cout << endl << "=====================" << endl;
-            cout << "Received " << b->size() << " bytes of payload from " << f->src() << " :" << endl;
-            for(int i=0; i<b->size()/sizeof(data_type); i++)
-                cout << d[i] << " ";
-            cout << endl << "=====================" << endl;
-            _nic->free(b);
-            
-            estado = 1;
-        	GPIO g('C',3, GPIO::OUT);
-			g.set(1);
-			Delay esperando(500000);//0,5 segundos.
-			g.set(0);
-        }
-    }
-
-private:
-    Protocol _prot;
-    NIC * _nic;
-};
-
-void receiver()
-{
-    
-    led = new GPIO('C',3, GPIO::OUT);
-    led_value = false; //true;
-    led->set(led_value);
-    cout << "Hello, I am the receiver 103." << endl;
-    cout << "I will attach myself to the NIC and print every message I get." << endl;
-    NIC * nic = new NIC();
-    Receiver * r = new Receiver(NIC::ELP, nic);
-}
-
 
 const int iterations = 10;
 
@@ -100,6 +16,7 @@ Mutex table;
 Thread * phil[5];
 Semaphore * chopstick[5];
 
+OStream cout;
 
 int philosopher(int n, int l, int c)
 {
@@ -139,14 +56,51 @@ int philosopher(int n, int l, int c)
 
 int main()
 {
+    table.lock();
+    Display::clear();
+    Display::position(0, 0);
+    cout << "The Philosopher's Dinner:" << endl;
 
-	int i;
-	estado = 1;
+    for(int i = 0; i < 5; i++)
+        chopstick[i] = new Semaphore;
 
-	receiver();
-    sender();
+    phil[0] = new Thread(&philosopher, 0,  5, 32);
+    phil[1] = new Thread(&philosopher, 1, 10, 44);
+    phil[2] = new Thread(&philosopher, 2, 16, 39);
+    phil[3] = new Thread(&philosopher, 3, 16, 24);
+    phil[4] = new Thread(&philosopher, 4, 10, 20);
 
-    while(1);
+    cout << "Philosophers are alive and hungry!" << endl;
+
+    Display::position(7, 44);
+    cout << '/';
+    Display::position(13, 44);
+    cout << '\\';
+    Display::position(16, 35);
+    cout << '|';
+    Display::position(13, 27);
+    cout << '/';
+    Display::position(7, 27);
+    cout << '\\';
+    Display::position(19, 0);
+
+    cout << "The dinner is served ..." << endl;
+    table.unlock();
+
+    for(int i = 0; i < 5; i++) {
+        int ret = phil[i]->join();
+        table.lock();
+        Display::position(20 + i, 0);
+        cout << "Philosopher " << i << " ate " << ret << " times " << endl;
+        table.unlock();
+    }
+
+    for(int i = 0; i < 5; i++)
+        delete chopstick[i];
+    for(int i = 0; i < 5; i++)
+        delete phil[i];
+
+    cout << "The end!" << endl;
 
     return 0;
 }
