@@ -2,14 +2,13 @@
 #include <alarm.h>
 
 #include <utility/ostream.h>
-#include <nic.h>
 	
 
 #include "auxiliar_power.h"
-
+#include <periodic_thread.h>
 
 static const unsigned int DUTY_CYCLE = 1; // %
-static const bool half_duty_cycle = true;
+//static const bool half_duty_cycle = true;
 
 using namespace EPOS;
 
@@ -19,6 +18,9 @@ const unsigned int delay_time = 2000000;
 
 bool led_value;
 GPIO * led;
+
+const int iterations = 100;
+const long period_a = 100; // ms
 
 void led_envio(){
 
@@ -41,16 +43,44 @@ void led_recebimento(){
     
 }
 
+void handler(const unsigned int & id){
 
+    cout << "Okay!" << endl;
+}
+
+int func_a(){
+
+    cout << "A";
+    for(int i = 0; i < iterations; i++) {
+	    led_envio();
+        Periodic_Thread::wait_next();
+        cout << "a";
+        setPowerMode(pm_pm1);
+    }
+    cout << "A";
+    return 'A';
+}
 
 int main()
 {
     cout << "Hello main" << endl;
     
+	//auto int_time = TSC::time_stamp() + (2*TSC::frequency());
+    
     while(1){
-    	led_envio();
     	
-    	setPowerMode(pm_pm3);
+    	Periodic_Thread thread_a(RTConf(period_a * 1000, iterations), &func_a);
+    	int status_a = thread_a.join();
+    	
+    	
+    	
+		
+		
+    	//Timer::interrupt(TSC::time_stamp() + 100, handler);
+    	
+    	//TSC::wake_up_at(int_time, &handler);
+    	
+    	//int_time = TSC::time_stamp() + (2*TSC::frequency());
 		
 	}
 
