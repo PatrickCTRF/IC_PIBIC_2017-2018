@@ -24,6 +24,8 @@ const long period_a = 100; // ms
 
 void led_envio(){
 
+	led = new GPIO('C',3, GPIO::OUT);
+
 	led->set(1);//Sequencia para indicar dado sendo enviado.
     Alarm::delay(delay_time/8);
     led->set(0);
@@ -32,6 +34,8 @@ void led_envio(){
     Alarm::delay(delay_time/8);
     led->set(0);
     Alarm::delay(delay_time/8);
+    
+    free(led);
 }
 
 void led_recebimento(){
@@ -55,7 +59,6 @@ int func_a(){
 	    led_envio();
         Periodic_Thread::wait_next();
         cout << "a";
-        setPowerMode(pm_pm1);
     }
     cout << "A";
     return 'A';
@@ -69,12 +72,13 @@ int main()
     
     while(1){
     	
-    	Periodic_Thread thread_a(RTConf(period_a * 1000, iterations), &func_a);
-    	int status_a = thread_a.join();
+    	//Periodic_Thread thread_a(RTConf(period_a * 1000, iterations), &func_a);
+    	//int status_a = thread_a.join();
     	
+    	led_envio();
+    	wake_up_after_us(3000000);
+    	setPowerMode(pm_pm1);
     	
-    	
-		
 		
     	//Timer::interrupt(TSC::time_stamp() + 100, handler);
     	
