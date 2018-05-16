@@ -19,21 +19,41 @@ const unsigned int delay_time = 2000000;
 bool led_value;
 GPIO * led;
 
+
 const int iterations = 100;
 const long period_a = 100; // ms
 
+void ultra_delay(){
+	
+	long i=0, j=0, numb = 316;
+	
+	while(i++<numb){
+		
+		while(j++<numb)cout << j << "\n"; j=0;
+		
+		
+	}i=0;
+	
+}
+
 void led_envio(){
+	
+	
 
 	led = new GPIO('C',3, GPIO::OUT);
 
 	led->set(1);//Sequencia para indicar dado sendo enviado.
-    Alarm::delay(delay_time/8);
+	cout << "a";
+    ultra_delay();
     led->set(0);
-    Alarm::delay(delay_time/8);
+	cout << "b";
+    ultra_delay();
     led->set(1);
-    Alarm::delay(delay_time/8);
+	cout << "a";
+    ultra_delay();
     led->set(0);
-    Alarm::delay(delay_time/8);
+	cout << "b";
+    ultra_delay();
     
     free(led);
 }
