@@ -3,6 +3,8 @@
 #include <gpio.h>
 #include <alarm.h>
 
+#include <i2c.h>
+
 using namespace EPOS;
 
 OStream cout;
@@ -43,7 +45,7 @@ void sender()
         cout << "Sending message: " << data << endl;
         //nic->send(nic->broadcast(), NIC::ELP, data, sizeof data);
             NIC::Address addr;
-            addr[0] = 0x42;
+            addr[0] = 0x8b;
             addr[1] = 0x3c;
             
 		led_envio();
@@ -83,7 +85,7 @@ public:
             _nic->free(b);
             
             led_recebimento();
-            recebeu = 1;
+            recebeu += 1;
         }
     }
 
@@ -105,22 +107,57 @@ void receiver()
 int main()
 {
     cout << "Hello main" << endl;
-    
-    recebeu = 0;
 
-    receiver();
+	receiver();//Ativamos o recebimento de mensagens por rádio. A função update() é chamada quando chega uma noa mensagem.
+    
+    while(1){
+		
+		recebeu = 0;//A cada ciclo, reiniciamos a quantidade de mensagens recebidas
+		
+		while(recebeu != INDICE_DESTA_PLACA)//Só enviaremos novamente a mensagem após recebermos uma mensagem direcionada a esta placa.	
+				
+		sender();
+		
+    }
+    
+    
+    
+    
+    
+    
+    
+//========================================================================================    
     
 	while(1){
 	
 	
-	if(recebeu != 0){//Só enviaremos novamente a mensagem após recebermos.	
-		    
-    	sender();	/*Lembrar que somente uma placa deve fazer este "sender()" antes do while interno para INICIAR O CICLO. Senão, todas 						ficariam esperando receber uma mensagem para poder enviar e nenhuma enviaria primeiro.*/
-	}
+		if(recebeu != 0){//Só enviaremos novamente a mensagem após recebermos.	
+				
+			sender();	/*Lembrar que somente uma placa deve fazer este "sender()" antes do while interno para INICIAR O CICLO. Senão, todas 						ficariam esperando receber uma mensagem para poder enviar e nenhuma enviaria primeiro.*/
+		}
     	
     }
 
+	
+	//Abaixo não executa e está ali só pra eu não esquecer como faz
 
+    cout << "EPOSMote III I2C Sensor Test" << endl;
+
+    I2C_Temperature_Sensor ts;
+    I2C_Humidity_Sensor hs;
+
+    while(true) {
+        Alarm::delay(1000000);
+        cout << "relative humidity = " << hs.get() << "%" << endl;
+        cout << "temperature = " << ts.get() << "C" << endl;
+    }
 
     return 0;
 }
+
+
+
+
+
+
+

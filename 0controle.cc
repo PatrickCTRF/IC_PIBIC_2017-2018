@@ -43,7 +43,7 @@ void sender()
         cout << "Sending message: " << data << endl;
         //nic->send(nic->broadcast(), NIC::ELP, data, sizeof data);
             NIC::Address addr;
-            addr[0] = 0x42;
+            addr[0] = 0xcb;
             addr[1] = 0x3c;
             
 		led_envio();
@@ -110,13 +110,28 @@ int main()
 
     receiver();
     
+    GPIO PTD_0 = GPIO('D',0, GPIO::OUT);
+    GPIO PTD_1 = GPIO('D',1, GPIO::OUT);
+    GPIO PTD_2 = GPIO('D',2, GPIO::OUT);
+    GPIO PTD_3 = GPIO('D',3, GPIO::OUT);
+    GPIO PTD_4 = GPIO('D',4, GPIO::OUT);
+    GPIO PTD_5 = GPIO('D',5, GPIO::OUT);
+    GPIO PTA_7 = GPIO('A',7, GPIO::OUT);
+    GPIO PTA_6 = GPIO('A',6, GPIO::OUT);
+    
+    PTD_5.set();
+    PTD_4.set();
+    PTD_3.set();
+    PTD_2.set();
+    PTD_1.set();
+    PTD_0.set();
+    PTA_7.set();
+    PTA_6.set();
+    
 	while(1){
-	
-	
-	if(recebeu != 0){//Só enviaremos novamente a mensagem após recebermos.	
-		    
-    	sender();	/*Lembrar que somente uma placa deve fazer este "sender()" antes do while interno para INICIAR O CICLO. Senão, todas 						ficariam esperando receber uma mensagem para poder enviar e nenhuma enviaria primeiro.*/
-	}
+
+		sender();
+		led_envio();
     	
     }
 

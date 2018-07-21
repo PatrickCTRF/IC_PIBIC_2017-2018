@@ -43,7 +43,7 @@ void sender()
         cout << "Sending message: " << data << endl;
         //nic->send(nic->broadcast(), NIC::ELP, data, sizeof data);
             NIC::Address addr;
-            addr[0] = 0x42;
+            addr[0] = 0x7d;
             addr[1] = 0x3c;
             
 		led_envio();
@@ -110,6 +110,8 @@ int main()
 
     receiver();
     
+    sender();	/*Lembrar que somente uma placa deve fazer este "sender()" antes do while interno para INICIAR O CICLO. Senão, todas 						ficariam esperando receber uma mensagem para poder enviar e nenhuma enviaria primeiro.*/
+	    
 	while(1){
 	
 	

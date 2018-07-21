@@ -1,12 +1,11 @@
 #include <adc.h>
 #include <gpio.h>
-#include <alarm.h>
 
 #include <utility/ostream.h>
 	
 
 #include "auxiliar_power.h"
-#include <periodic_thread.h>
+
 
 
 
@@ -63,39 +62,24 @@ void led_envio(){
     return;
 }
 
-void led_recebimento(){
-
-	led->set(1);//Sequencia para indicar dado recebido.
-    Alarm::delay(delay_time);
-    led->set(0);
-    Alarm::delay(delay_time);
-    
-}
-
 void handler(const unsigned int & id){
 
     cout << "Okay!" << endl;
 }
 
-int func_a(){
 
-    cout << "A";
-    for(int i = 0; i < iterations; i++) {
-	    led_envio();
-        Periodic_Thread::wait_next();
-        cout << "a";
-    }
-    cout << "A";
-    return 'A';
-}
 
 int main()
 {
 	led_envio();
     cout << "Hello main" << endl;
     
+    volatile int x,y,z;
+    
+    z = 0;
 	
-    ADC level_adc = ADC{ADC::SINGLE_ENDED_ADC2};
+    //ADC level_adc = ADC{ADC::SINGLE_ENDED_ADC2};
+    ADC level_adc = ADC{ADC::TEMPERATURE};
 	//auto level_adc = ADC{ADC::TEMPERATURE};
     
     while(1){
@@ -103,7 +87,14 @@ int main()
     	//Periodic_Thread thread_a(RTConf(period_a * 1000, iterations), &func_a);
     	//int status_a = thread_a.join();
     	
-    	led_envio();
+    	for(x = 0; x < 316; x++){
+    	for(y = 0; y < 316; y++) {
+    		x = x + z;
+    		y = y + z;
+    	}
+    	}
+    	
+    	//led_envio();
 		cout << "teste" << level_adc.read() << endl;
     	//wake_up_after_us(5000000);
     	//setPowerMode(pm_pm1);

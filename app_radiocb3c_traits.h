@@ -58,6 +58,12 @@ template<> struct Traits<Heaps>: public Traits<void>
     static const bool debugged = hysterically_debugged;
 };
 
+template<> struct Traits<Observers>: public Traits<void>
+{
+    // Some observed objects are created before initializing the Display
+    // Enabling debug may cause trouble in some Machines
+    static const bool debugged = false;
+};
 
 // System Parts (mostly to fine control debugging)
 template<> struct Traits<Boot>: public Traits<void>
@@ -84,10 +90,9 @@ template<> struct Traits<Serial_Display>: public Traits<void>
     static const int TAB_SIZE = 8;
 };
 
-template<> template <unsigned int S> struct Traits<Software_AES<S>>: public Traits<void>
+template<> struct Traits<Serial_Keyboard>: public Traits<void>
 {
     static const bool enabled = true;
-    static const unsigned int KEY_SIZE = 16;
 };
 
 __END_SYS
@@ -116,7 +121,7 @@ template<> struct Traits<System>: public Traits<void>
 
     enum {FOREVER = 0, SECOND = 1, MINUTE = 60, HOUR = 3600, DAY = 86400, WEEK = 604800, MONTH = 2592000, YEAR = 31536000};
     static const unsigned long LIFE_SPAN = 1 * HOUR; // in seconds
-    static const unsigned int DUTY_CYCLE = 10000; // in ppm
+    static const unsigned int DUTY_CYCLE = 1000000; // in ppm
 
     static const bool reboot = true;
 
@@ -191,6 +196,7 @@ template<> struct Traits<TSTP>: public Traits<Network>
 {
     static const bool enabled = NETWORKS::Count<TSTP>::Result;
     static const bool sink = false;
+    static const unsigned int KEY_SIZE = 16;
 };
 
 template<> template <typename S> struct Traits<Smart_Data<S>>: public Traits<Network>

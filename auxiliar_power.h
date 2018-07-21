@@ -173,8 +173,22 @@ Time_Stamp time_stamp()
 
 
 
-
-
+/**
+ * Esta função aguarda por um tempo requisitado de delay, sendo este cronometrado 
+ * diretamente pelo contador do sleep timer do sistema e trabalhando com o conceito de Time Stamp.
+ * Vale lembrar que Time_Stamp é apenas um tipo definido dentro do sistema e equivalente a um 
+ * inteiro ou long (a verificar).
+ */
+void delayRealTimeus(int us){
+	
+	Time_Stamp time_stamp_inicial = time_stamp();
+	
+	Time_Stamp ts = us_to_ts(us);//Este é o tempo de delay desejado.
+	
+	//Nós apenas aguardaremos aqui até que o tempo atual seja igual ao tempo de espera desejado quando o delay foi chamado.
+	while(time_stamp() < ts + time_stamp_inicial);
+	
+}
 
 
 

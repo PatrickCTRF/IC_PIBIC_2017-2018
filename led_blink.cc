@@ -8,7 +8,7 @@ int main()
 
     for(bool b=false;;b=(b+1)%2) {
         g.set(b);
-        for(volatile int t=0;t<0xffffff;t++);
+        for(volatile int t=0;t<0xfffff;t++);
     }
 
     return 0;

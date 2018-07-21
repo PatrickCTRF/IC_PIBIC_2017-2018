@@ -30,7 +30,7 @@ template<> struct Traits<Build>
     static const unsigned int MODEL = eMote3;
 
     static const unsigned int CPUS = 1;
-    static const unsigned int NODES = 2; // > 1 => NETWORKING
+    static const unsigned int NODES = 1; // > 1 => NETWORKING
 };
 
 
@@ -121,7 +121,7 @@ template<> struct Traits<System>: public Traits<void>
 
     enum {FOREVER = 0, SECOND = 1, MINUTE = 60, HOUR = 3600, DAY = 86400, WEEK = 604800, MONTH = 2592000, YEAR = 31536000};
     static const unsigned long LIFE_SPAN = 1 * HOUR; // in seconds
-    static const unsigned int DUTY_CYCLE = 1000000; // in ppm
+    static const unsigned int DUTY_CYCLE = 10000; // in ppm
 
     static const bool reboot = true;
 
